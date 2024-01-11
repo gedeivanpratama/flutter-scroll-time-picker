@@ -76,11 +76,11 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
       ? 0
       : _seconds.indexOf(_selectedTime.second);
 
-  int get selectedHour => _hours[selectedHourIndex % _hours.length];
+  int get selectedHour => _hours[_hourController.selectedItem % _hours.length];
 
-  int get selectedMinute => _minutes[selectedMinuteIndex % _minutes.length];
+  int get selectedMinute => _minutes[_minuteController.selectedItem % _minutes.length];
 
-  int get selectedSecond => _seconds[selectedSecondIndex % _seconds.length];
+  int get selectedSecond => _seconds[_secondController.selectedItem % _seconds.length];
 
   @override
   void initState() {
