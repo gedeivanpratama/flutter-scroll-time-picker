@@ -1,6 +1,6 @@
 name: scroll_time_picker
 description: "A Customizable Time Picker Widget for Flutter"
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/azisanw19/flutter-scroll-time-picker
 
 environment:
