@@ -1,7 +1,3 @@
-library scroll_time_picker;
-
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/scroll_time_picker.dart';
+export 'src/models/time_picker_options.dart';
+export 'src/models/time_picker_scroll_view_options.dart';
