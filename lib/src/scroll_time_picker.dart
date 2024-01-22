@@ -37,7 +37,7 @@ class ScrollTimePicker extends StatefulWidget {
   /// Indicator displayed in the center of the ScrollDatePicker
   final Widget? indicator;
 
-  /// TODO("Aziz Anwar"): Add support for 12h format.
+  /// Whether to use 12 hour format.
   final bool is12hFormat;
 
   @override
