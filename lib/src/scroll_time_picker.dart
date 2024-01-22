@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scroll_time_picker/src/widgets/time_scroll_view.dart';
 
+import 'constants.dart';
 import 'models/time_picker_options.dart';
 import 'models/time_picker_scroll_view_options.dart';
 
@@ -10,15 +11,16 @@ class ScrollTimePicker extends StatefulWidget {
     required this.selectedTime,
     required this.onDateTimeChanged,
     this.options = const TimePickerOptions(),
-    this.viewType,
+    this.viewType = const [TimePickerViewType.hour, TimePickerViewType.minute],
     this.scrollViewOptions = const TimePickerScrollViewOptions(),
     this.indicator,
+    this.is12hFormat = false,
   }) : super(key: key);
 
   /// A list that allows you to specify the type of date view.
   /// And also the order of the viewType in list is the order of the date view.
   /// If this list is null, the default order of locale is set.
-  final List<TimePickerViewType>? viewType;
+  final List<TimePickerViewType> viewType;
 
   /// Currently selected time.
   final DateTime selectedTime;
@@ -36,7 +38,7 @@ class ScrollTimePicker extends StatefulWidget {
   final Widget? indicator;
 
   /// TODO("Aziz Anwar"): Add support for 12h format.
-  // bool is24hFormat;
+  final bool is12hFormat;
 
   @override
   State<ScrollTimePicker> createState() => _ScrollTimePickerState();
@@ -52,21 +54,62 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
   /// This widget's second selection and animation state.
   late FixedExtentScrollController _secondController;
 
+  /// This widget's 24h format selection and animation state.
+  late FixedExtentScrollController _12hFormatController;
+
   late Widget _hourScrollView;
   late Widget _minuteScrollView;
   late Widget _secondScrollView;
+  late Widget _12hFormatScrollView;
 
   late DateTime _selectedTime;
+  late String _selected12hFormat;
   bool isHourScrollable = true;
   bool isMinuteScrollable = true;
   bool isSecondScrollable = true;
+  bool is12hFormatScrollable = true;
   List<int> _hours = [];
   List<int> _minutes = [];
   List<int> _seconds = [];
+  List<String> _12hFormat = [];
 
-  int get selectedHourIndex => !_hours.contains(_selectedTime.hour)
+  int get _contains12hFormat {
+    if (_selectedTime.hour > 12) {
+      return _selectedTime.hour - 12;
+    }
+    else if (_selectedTime.hour == 0) {
+      return 12;
+    }
+    else {
+      return _selectedTime.hour;
+    }
+  }
+
+  int get _24hourFormat {
+    if (_selected12hFormat == 'AM') {
+      return selectedHour;
+    }
+    else if (_selected12hFormat == 'PM') {
+      return selectedHour == 12
+          ? 0
+          : selectedHour + 12;
+    }
+    else {
+      throw 'Invalid 12h format.';
+    }
+  }
+
+  int get selectedHourIndex => !_hours.contains(
+      widget.is12hFormat
+          ? _contains12hFormat
+          : _selectedTime.hour
+  )
       ? 0
-      : _hours.indexOf(_selectedTime.hour);
+      : _hours.indexOf(
+      widget.is12hFormat
+          ? _contains12hFormat
+          : _selectedTime.hour
+  );
 
   int get selectedMinuteIndex => !_minutes.contains(_selectedTime.minute)
       ? 0
@@ -76,20 +119,31 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
       ? 0
       : _seconds.indexOf(_selectedTime.second);
 
+  int get selected12hFormatIndex => !_12hFormat.contains(_selected12hFormat)
+      ? 0
+      : _12hFormat.indexOf(_selected12hFormat);
+
   int get selectedHour => _hours[_hourController.selectedItem % _hours.length];
 
   int get selectedMinute => _minutes[_minuteController.selectedItem % _minutes.length];
 
   int get selectedSecond => _seconds[_secondController.selectedItem % _seconds.length];
 
+  String get selected12hFormat => _12hFormat[_12hFormatController.selectedItem % _12hFormat.length];
+
   @override
   void initState() {
     super.initState();
     _selectedTime = widget.selectedTime;
 
-    _hours = [for (int i = 0; i < 24; i++) i];
+    _init12hFormat();
+
+    _hours = widget.is12hFormat
+        ? [for (int i = 1; i <= 12; i++) i]
+        : [for (int i = 0; i < 24; i++) i];
     _minutes = [for (int i = 0; i < 60; i++) i];
     _seconds = [for (int i = 0; i < 60; i++) i];
+    _12hFormat = time12HourFormat;
 
     _hourController =
         FixedExtentScrollController(initialItem: selectedHourIndex);
@@ -97,7 +151,13 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
         FixedExtentScrollController(initialItem: selectedMinuteIndex);
     _secondController =
         FixedExtentScrollController(initialItem: selectedSecondIndex);
+    _12hFormatController =
+        FixedExtentScrollController(initialItem: selected12hFormatIndex);
   }
+
+void _init12hFormat() {
+    _selected12hFormat = _selectedTime.hour > 12 ? 'PM' : 'AM';
+}
 
   @override
   void didUpdateWidget(covariant ScrollTimePicker oldWidget) {
@@ -106,12 +166,15 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
       _selectedTime = widget.selectedTime;
       isMinuteScrollable = false;
       isSecondScrollable = false;
+      is12hFormatScrollable = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _hourController.animateToItem(selectedHourIndex,
             curve: Curves.ease, duration: const Duration(microseconds: 500));
         _minuteController.animateToItem(selectedMinuteIndex,
             curve: Curves.ease, duration: const Duration(microseconds: 500));
         _secondController.animateToItem(selectedSecondIndex,
+            curve: Curves.ease, duration: const Duration(microseconds: 500));
+        _12hFormatController.animateToItem(selected12hFormatIndex,
             curve: Curves.ease, duration: const Duration(microseconds: 500));
       });
     }
@@ -122,6 +185,7 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
     _hourController.dispose();
     _minuteController.dispose();
     _secondController.dispose();
+    _12hFormatController.dispose();
     super.dispose();
   }
 
@@ -159,57 +223,77 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
           _onDateTimeChanged();
           isSecondScrollable = true;
         });
+    _12hFormatScrollView = TimeScrollView(
+        key: const Key('f12h'),
+        times: _12hFormat,
+        controller: _12hFormatController,
+        options: widget.options,
+        scrollViewOptions: widget.scrollViewOptions.f12h,
+        selectedIndex: selected12hFormatIndex,
+        onChanged: (_) {
+          _onDateTimeChanged();
+          is12hFormatScrollable = true;
+        });
   }
 
   void _onDateTimeChanged() {
     int _selectedHour = _selectedTime.hour;
     int _selectedMinute = _selectedTime.minute;
     int _selectedSecond = _selectedTime.second;
+    String _selected12h = _selected12hFormat;
 
-    if (widget.viewType?.contains(TimePickerViewType.hour) ?? false) {
+    if (widget.viewType.contains(TimePickerViewType.hour)) {
       _selectedHour = selectedHour;
     }
-    if (widget.viewType?.contains(TimePickerViewType.minute) ?? false) {
+    if (widget.viewType.contains(TimePickerViewType.minute)) {
       _selectedMinute = selectedMinute;
     }
-    if (widget.viewType?.contains(TimePickerViewType.second) ?? false) {
+    if (widget.viewType.contains(TimePickerViewType.second)) {
       _selectedSecond = selectedSecond;
     }
+    if (widget.is12hFormat) {
+      _selected12h = selected12hFormat;
+    }
 
+    _selected12hFormat = _selected12h;
     _selectedTime = DateTime(
       _selectedTime.year,
       _selectedTime.month,
       _selectedTime.day,
-      _selectedHour,
+      widget.is12hFormat ? _24hourFormat : _selectedHour,
       _selectedMinute,
       _selectedSecond,
     );
+
+    print("Selected Time: $_selectedTime");
+    print("Selected 12h Format: $_selected12hFormat");
+    print("Selected Hour: $_selectedHour");
     widget.onDateTimeChanged(_selectedTime);
   }
 
   List<Widget> _getScrollTimePicker() {
     _initTimeScrollView();
+    final viewList = <Widget>[];
 
-    if (widget.viewType?.isNotEmpty ?? false) {
-      final viewList = <Widget>[];
-
-      for (final viewType in widget.viewType!) {
-        switch (viewType) {
-          case TimePickerViewType.hour:
-            viewList.add(_hourScrollView);
-            break;
-          case TimePickerViewType.minute:
-            viewList.add(_minuteScrollView);
-            break;
-          case TimePickerViewType.second:
-            viewList.add(_secondScrollView);
-            break;
-        }
+    for (final viewType in widget.viewType) {
+      switch (viewType) {
+        case TimePickerViewType.hour:
+          viewList.add(_hourScrollView);
+          break;
+        case TimePickerViewType.minute:
+          viewList.add(_minuteScrollView);
+          break;
+        case TimePickerViewType.second:
+          viewList.add(_secondScrollView);
+          break;
       }
-      return viewList;
     }
 
-    return [_hourScrollView, _minuteScrollView, _secondScrollView];
+    if (widget.is12hFormat) {
+      viewList.add(_12hFormatScrollView);
+    }
+
+    return viewList;
   }
 
   @override

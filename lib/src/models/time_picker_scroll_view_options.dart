@@ -5,6 +5,7 @@ class TimePickerScrollViewOptions {
     this.hour = const ScrollViewDetailOptions(margin: EdgeInsets.all(4)),
     this.minute = const ScrollViewDetailOptions(margin: EdgeInsets.all(4)),
     this.second = const ScrollViewDetailOptions(margin: EdgeInsets.all(4)),
+    this.f12h = const ScrollViewDetailOptions(margin: EdgeInsets.all(4)),
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
   });
@@ -12,6 +13,7 @@ class TimePickerScrollViewOptions {
   final ScrollViewDetailOptions hour;
   final ScrollViewDetailOptions minute;
   final ScrollViewDetailOptions second;
+  final ScrollViewDetailOptions f12h;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
 
@@ -21,6 +23,7 @@ class TimePickerScrollViewOptions {
       hour: value,
       minute: value,
       second: value,
+      f12h: value,
     );
   }
 }

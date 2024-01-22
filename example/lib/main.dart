@@ -51,10 +51,8 @@ class _MyAppState extends State<MyApp> {
             height: 250,
             child: ScrollTimePicker(
               selectedTime: _selectedTime,
-              viewType: [
-                TimePickerViewType.hour,
-                TimePickerViewType.minute,
-              ],
+
+              is12hFormat: true,
               onDateTimeChanged: (DateTime value) {
                 setState(() {
                   _selectedTime = value;
