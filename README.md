@@ -1,6 +1,6 @@
 # Scroll Time Picker
 
-[![Flutter Package](https://img.shields.io/pub/v/scroll_time_picker.svg)](https://pub.dev/packages/flutter_map_location_picker)
+[![Flutter Package](https://img.shields.io/pub/v/scroll_time_picker.svg)](https://pub.dev/packages/scroll_time_picker)
 [![Pub Points](https://img.shields.io/pub/points/scroll_time_picker)](https://pub.dev/packages/scroll_time_picker/score)
 [![Popularity](https://img.shields.io/pub/popularity/scroll_time_picker)](https://pub.dev/packages/scroll_time_picker/score)
 
