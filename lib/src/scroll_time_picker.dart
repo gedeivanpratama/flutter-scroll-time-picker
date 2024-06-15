@@ -267,9 +267,9 @@ void _init12hFormat() {
       _selectedSecond,
     );
 
-    print("Selected Time: $_selectedTime");
-    print("Selected 12h Format: $_selected12hFormat");
-    print("Selected Hour: $_selectedHour");
+    // print("Selected Time: $_selectedTime");
+    // print("Selected 12h Format: $_selected12hFormat");
+    // print("Selected Hour: $_selectedHour");
     widget.onDateTimeChanged(_selectedTime);
   }
 
