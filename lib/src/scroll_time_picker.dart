@@ -87,11 +87,13 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
 
   int get _24hourFormat {
     if (_selected12hFormat == 'AM') {
-      return selectedHour;
+      return selectedHour == 12
+          ? 0
+          : selectedHour;
     }
     else if (_selected12hFormat == 'PM') {
       return selectedHour == 12
-          ? 0
+          ? 12
           : selectedHour + 12;
     }
     else {
@@ -156,7 +158,7 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
   }
 
 void _init12hFormat() {
-    _selected12hFormat = _selectedTime.hour > 12 ? 'PM' : 'AM';
+    _selected12hFormat = _selectedTime.hour >= 12 ? 'PM' : 'AM';
 }
 
   @override
