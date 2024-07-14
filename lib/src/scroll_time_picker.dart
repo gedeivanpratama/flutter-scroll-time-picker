@@ -194,7 +194,8 @@ void _init12hFormat() {
   void _initTimeScrollView() {
     _hourScrollView = TimeScrollView(
         key: const Key('hour'),
-        times: _hours,
+        /// change hours to string so it can be formated to HH instead of H
+        times: _hours.map((hour)=> hour.toString().padLeft(2, '0')).toList(),
         controller: _hourController,
         options: widget.options,
         scrollViewOptions: widget.scrollViewOptions.hour,
@@ -205,7 +206,8 @@ void _init12hFormat() {
         });
     _minuteScrollView = TimeScrollView(
         key: const Key('minute'),
-        times: _minutes,
+        /// change minutes to string so it can be formated to mm instead of m
+        times: _minutes.map((minute)=> minute.toString().padLeft(2, '0')).toList(),
         controller: _minuteController,
         options: widget.options,
         scrollViewOptions: widget.scrollViewOptions.minute,
