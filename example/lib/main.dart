@@ -49,9 +49,24 @@ class _MyAppState extends State<MyApp> {
           ),
           SizedBox(
             height: 250,
+            width: 300,
             child: ScrollTimePicker(
               selectedTime: _selectedTime,
-
+              divider: Text("-"),
+              indicator: Container(
+                height: 30,
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(),
+                    bottom: BorderSide(),
+                  ),
+                ),
+              ),
+              options: TimePickerOptions(backgroundColor: Colors.white),
+              scrollViewOptions: TimePickerScrollViewOptions(
+                hour: ScrollViewDetailOptions(alignment: Alignment.center),
+                minute: ScrollViewDetailOptions(alignment: Alignment.center),
+              ),
               is12hFormat: true,
               onDateTimeChanged: (DateTime value) {
                 setState(() {

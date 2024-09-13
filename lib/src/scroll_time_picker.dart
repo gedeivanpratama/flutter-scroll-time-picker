@@ -14,6 +14,7 @@ class ScrollTimePicker extends StatefulWidget {
     this.viewType = const [TimePickerViewType.hour, TimePickerViewType.minute],
     this.scrollViewOptions = const TimePickerScrollViewOptions(),
     this.indicator,
+    this.divider,
     this.is12hFormat = false,
   }) : super(key: key);
 
@@ -39,6 +40,9 @@ class ScrollTimePicker extends StatefulWidget {
 
   /// Whether to use 12 hour format.
   final bool is12hFormat;
+
+  /// add divider between hour and minutes
+  final Widget? divider;
 
   @override
   State<ScrollTimePicker> createState() => _ScrollTimePickerState();
@@ -76,42 +80,28 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
   int get _contains12hFormat {
     if (_selectedTime.hour > 12) {
       return _selectedTime.hour - 12;
-    }
-    else if (_selectedTime.hour == 0) {
+    } else if (_selectedTime.hour == 0) {
       return 12;
-    }
-    else {
+    } else {
       return _selectedTime.hour;
     }
   }
 
   int get _24hourFormat {
     if (_selected12hFormat == 'AM') {
-      return selectedHour == 12
-          ? 0
-          : selectedHour;
-    }
-    else if (_selected12hFormat == 'PM') {
-      return selectedHour == 12
-          ? 12
-          : selectedHour + 12;
-    }
-    else {
+      return selectedHour == 12 ? 0 : selectedHour;
+    } else if (_selected12hFormat == 'PM') {
+      return selectedHour == 12 ? 12 : selectedHour + 12;
+    } else {
       throw 'Invalid 12h format.';
     }
   }
 
   int get selectedHourIndex => !_hours.contains(
-      widget.is12hFormat
-          ? _contains12hFormat
-          : _selectedTime.hour
-  )
+          widget.is12hFormat ? _contains12hFormat : _selectedTime.hour)
       ? 0
       : _hours.indexOf(
-      widget.is12hFormat
-          ? _contains12hFormat
-          : _selectedTime.hour
-  );
+          widget.is12hFormat ? _contains12hFormat : _selectedTime.hour);
 
   int get selectedMinuteIndex => !_minutes.contains(_selectedTime.minute)
       ? 0
@@ -127,11 +117,14 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
 
   int get selectedHour => _hours[_hourController.selectedItem % _hours.length];
 
-  int get selectedMinute => _minutes[_minuteController.selectedItem % _minutes.length];
+  int get selectedMinute =>
+      _minutes[_minuteController.selectedItem % _minutes.length];
 
-  int get selectedSecond => _seconds[_secondController.selectedItem % _seconds.length];
+  int get selectedSecond =>
+      _seconds[_secondController.selectedItem % _seconds.length];
 
-  String get selected12hFormat => _12hFormat[_12hFormatController.selectedItem % _12hFormat.length];
+  String get selected12hFormat =>
+      _12hFormat[_12hFormatController.selectedItem % _12hFormat.length];
 
   @override
   void initState() {
@@ -157,9 +150,9 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
         FixedExtentScrollController(initialItem: selected12hFormatIndex);
   }
 
-void _init12hFormat() {
+  void _init12hFormat() {
     _selected12hFormat = _selectedTime.hour >= 12 ? 'PM' : 'AM';
-}
+  }
 
   @override
   void didUpdateWidget(covariant ScrollTimePicker oldWidget) {
@@ -194,7 +187,7 @@ void _init12hFormat() {
   void _initTimeScrollView() {
     _hourScrollView = TimeScrollView(
         key: const Key('hour'),
-        times: _hours.map((hour)=> hour.toString().padLeft(2, '0')).toList(),
+        times: _hours.map((hour) => hour.toString().padLeft(2, '0')).toList(),
         controller: _hourController,
         options: widget.options,
         scrollViewOptions: widget.scrollViewOptions.hour,
@@ -205,7 +198,9 @@ void _init12hFormat() {
         });
     _minuteScrollView = TimeScrollView(
         key: const Key('minute'),
-        times: _minutes.map((minute)=> minute.toString().padLeft(2, '0')).toList(),
+        times: _minutes
+            .map((minute) => minute.toString().padLeft(2, '0'))
+            .toList(),
         controller: _minuteController,
         options: widget.options,
         scrollViewOptions: widget.scrollViewOptions.minute,
@@ -293,6 +288,10 @@ void _init12hFormat() {
 
     if (widget.is12hFormat) {
       viewList.add(_12hFormatScrollView);
+    }
+
+    if (widget.divider != null) {
+      viewList.insert(1, widget.divider!);
     }
 
     return viewList;
