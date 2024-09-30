@@ -1,14 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:scroll_time_picker/scroll_time_picker.dart';
 
 void main() {
-  runApp(MaterialApp(home: const MyApp()));
+  runApp(const MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyAppState createState() => _MyAppState();
 }
 
@@ -19,7 +22,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scroll Time Picker Example"),
+        title: const Text("Scroll Time Picker Example"),
         centerTitle: true,
       ),
       body: Column(
@@ -29,7 +32,7 @@ class _MyAppState extends State<MyApp> {
             alignment: Alignment.center,
             child: Text(
               "$_selectedTime",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
           ),
           Container(
@@ -41,7 +44,7 @@ class _MyAppState extends State<MyApp> {
                   _selectedTime = DateTime.now();
                 });
               },
-              child: Text(
+              child: const Text(
                 "TODAY",
                 style: TextStyle(color: Colors.red),
               ),
@@ -50,31 +53,41 @@ class _MyAppState extends State<MyApp> {
           SizedBox(
             height: 250,
             width: 300,
-            child: ScrollTimePicker(
-              selectedTime: _selectedTime,
-              divider: Text("-"),
-              indicator: Container(
-                height: 30,
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(),
-                    bottom: BorderSide(),
-                  ),
-                ),
-              ),
-              options: TimePickerOptions(backgroundColor: Colors.white),
-              scrollViewOptions: TimePickerScrollViewOptions(
-                hour: ScrollViewDetailOptions(alignment: Alignment.center),
-                minute: ScrollViewDetailOptions(alignment: Alignment.center),
-              ),
-              is12hFormat: true,
+            child: ScrollDurationPicker(
+              selectedTime: DateTime(2024),
               onDateTimeChanged: (DateTime value) {
-                setState(() {
-                  _selectedTime = value;
-                });
+                log("Selected Time: ${value.hour}:${value.minute}");
               },
             ),
           ),
+          // SizedBox(
+          //   height: 250,
+          //   width: 300,
+          //   child: ScrollTimePicker(
+          //     selectedTime: _selectedTime,
+          //     divider: Text("-"),
+          //     indicator: Container(
+          //       height: 30,
+          //       decoration: BoxDecoration(
+          //         border: Border(
+          //           top: BorderSide(),
+          //           bottom: BorderSide(),
+          //         ),
+          //       ),
+          //     ),
+          //     options: TimePickerOptions(backgroundColor: Colors.white),
+          //     scrollViewOptions: TimePickerScrollViewOptions(
+          //       hour: ScrollViewDetailOptions(alignment: Alignment.center),
+          //       minute: ScrollViewDetailOptions(alignment: Alignment.center),
+          //     ),
+          //     is12hFormat: true,
+          //     onDateTimeChanged: (DateTime value) {
+          //       setState(() {
+          //         _selectedTime = value;
+          //       });
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );

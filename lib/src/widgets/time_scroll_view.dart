@@ -34,30 +34,31 @@ class TimeScrollView extends StatelessWidget {
   final int selectedIndex;
 
   double _getScrollViewWidth(BuildContext context) {
-    String _longestText = '';
+    String longestText = '';
+    // ignore: no_leading_underscores_for_local_identifiers
     List _times = times;
     for (var text in _times) {
-      if ('$text'.length > _longestText.length) {
-        _longestText = '$text'.padLeft(2, '0');
+      if ('$text'.length > longestText.length) {
+        longestText = '$text'.padLeft(2, '0');
       }
     }
-    _longestText += scrollViewOptions.label;
-    final TextPainter _painter = TextPainter(
+    longestText += scrollViewOptions.label;
+    final TextPainter painter = TextPainter(
       text: TextSpan(
         style: scrollViewOptions.selectedTextStyle,
-        text: _longestText,
+        text: longestText,
       ),
       textDirection: Directionality.of(context),
     );
-    _painter.layout();
-    return _painter.size.width + 8.0;
+    painter.layout();
+    return painter.size.width + 8.0;
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        int _maximumCount = constraints.maxHeight ~/ options.itemExtent;
+        int maximumCount = constraints.maxHeight ~/ options.itemExtent;
         return Container(
           margin: scrollViewOptions.margin,
           width: _getScrollViewWidth(context),
@@ -68,19 +69,19 @@ class TimeScrollView extends StatelessWidget {
             physics: const FixedExtentScrollPhysics(),
             perspective: options.perspective,
             onSelectedItemChanged: onChanged,
-            childDelegate: options.isLoop && times.length > _maximumCount
+            childDelegate: options.isLoop && times.length > maximumCount
                 ? ListWheelChildLoopingListDelegate(
-              children: List<Widget>.generate(
-                times.length,
-                    (index) => _buildDateView(index: index),
-              ),
-            )
+                    children: List<Widget>.generate(
+                      times.length,
+                      (index) => _buildDateView(index: index),
+                    ),
+                  )
                 : ListWheelChildListDelegate(
-              children: List<Widget>.generate(
-                times.length,
-                    (index) => _buildDateView(index: index),
-              ),
-            ),
+                    children: List<Widget>.generate(
+                      times.length,
+                      (index) => _buildDateView(index: index),
+                    ),
+                  ),
           ),
         );
       },
