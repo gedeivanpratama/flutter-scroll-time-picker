@@ -57,9 +57,6 @@ class _ScrollDurationPickerState extends State<ScrollDurationPicker> {
   /// This widget's minute selection and animation state.
   late FixedExtentScrollController _minuteController;
 
-  /// This widget's second selection and animation state.
-  late FixedExtentScrollController _secondController;
-
   late Widget _hourScrollView;
   late Widget _minuteScrollView;
 
@@ -139,7 +136,6 @@ class _ScrollDurationPickerState extends State<ScrollDurationPicker> {
   void dispose() {
     _hourController.dispose();
     _minuteController.dispose();
-    _secondController.dispose();
     super.dispose();
   }
 
