@@ -238,32 +238,32 @@ class _ScrollTimePickerState extends State<ScrollTimePicker> {
   }
 
   void _onDateTimeChanged() {
-    int selectedHour = _selectedTime.hour;
-    int selectedMinute = _selectedTime.minute;
-    int selectedSecond = _selectedTime.second;
-    String selected12h = _selected12hFormat;
+    int _selectedHour = _selectedTime.hour;
+    int _selectedMinute = _selectedTime.minute;
+    int _selectedSecond = _selectedTime.second;
+    String _selected12h = _selected12hFormat;
 
     if (widget.viewType.contains(TimePickerViewType.hour)) {
-      selectedHour = selectedHour;
+      _selectedHour = selectedHour;
     }
     if (widget.viewType.contains(TimePickerViewType.minute)) {
-      selectedMinute = selectedMinute;
+      _selectedMinute = selectedMinute;
     }
     if (widget.viewType.contains(TimePickerViewType.second)) {
-      selectedSecond = selectedSecond;
+      _selectedSecond = selectedSecond;
     }
     if (widget.is12hFormat) {
-      selected12h = selected12hFormat;
+      _selected12h = selected12hFormat;
     }
 
-    _selected12hFormat = selected12h;
+    _selected12hFormat = _selected12h;
     _selectedTime = DateTime(
       _selectedTime.year,
       _selectedTime.month,
       _selectedTime.day,
-      widget.is12hFormat ? _24hourFormat : selectedHour,
-      selectedMinute,
-      selectedSecond,
+      widget.is12hFormat ? _24hourFormat : _selectedHour,
+      _selectedMinute,
+      _selectedSecond,
     );
 
     // print("Selected Time: $_selectedTime");
